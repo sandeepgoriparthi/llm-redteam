@@ -1,0 +1,20 @@
+services:
+  redteam:
+    build: .
+    env_file: .env
+    volumes:
+      # Persist DB and reports outside the container
+      - ./data:/app/data
+      - ./reports:/app/reports
+    restart: unless-stopped
+
+  # One-shot scan -- run with: docker compose run --rm scan
+  scan:
+    build: .
+    env_file: .env
+    volumes:
+      - ./data:/app/data
+      - ./reports:/app/reports
+    command: ["redteam", "run"]
+    profiles:
+      - manual
